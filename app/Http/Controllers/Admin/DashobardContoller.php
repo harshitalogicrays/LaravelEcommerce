@@ -2,12 +2,31 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use App\Http\Controllers\Controller;
 
 class DashobardContoller extends Controller
 {
     public function index(){
-        return view('admin.dashboard');
+        $ordercount=Order::count();
+        $productcount=Product::count();
+        $totalcategories=Category::count();
+        $totalAllUsers=User::count();
+        $totalUser=User::where('role_as','0')->count();
+        $totalAdmin=User::where('role_as','1')->count();
+        $todayDate=Carbon::now()->format('Y-m-d');
+        $todaysorder=Order::whereDate('created_at',$todayDate)->count();
+        $thisMonth=Carbon::now()->format('m');
+        $thismonthorder=Order::whereMonth('created_at',$thisMonth)->count();
+        $thisYear=Carbon::now()->format('Y');
+        $thisyearorder=Order::whereYear('created_at',$thisYear)->count();
+
+        return view('admin.dashboard',compact('ordercount','productcount','totalcategories','totalAllUsers','totalUser','totalAdmin','todaysorder','thismonthorder','thisyearorder'));
+   
     }
 }
